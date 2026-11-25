@@ -1,9 +1,12 @@
 # Lake County civic leads
 
+**A weekly lead list for local contractors, built from public records with AI.**
+
 Village boards, plan commissions and zoning boards decide what gets built months before a
-permit is pulled or a contractor is called. This code reads the public agendas and minutes of
-every municipality in Lake County, IL (plus the county itself) every night and turns them into
-**a ranked weekly lead list for local contractors**.
+permit is pulled or a contractor is called. Every night this code reads the agendas and minutes
+those boards post (53 Lake County, Illinois governments tracked, 36 of them collected nightly),
+and every Monday it produces a short, ranked list of businesses that are about to need a
+build-out.
 
 **Project page:** https://aleksandraa-max.github.io/lake-county-civic-leads/  
 **Sample report:** [`sample/commercial-sample.md`](sample/commercial-sample.md)
@@ -11,11 +14,12 @@ every municipality in Lake County, IL (plus the county itself) every night and t
 This repository holds the code, configuration and tests only. The collected archive and the
 weekly reports are kept private (see [Privacy](#privacy)).
 
-Built with Claude Code.
+Built with Claude Code. The project page explains how it was built with AI and how the same
+pattern works for other small businesses.
 
 ## What it produces
 
-- **Commercial build-out leads.** Private commercial projects a general contractor can win
+- **Commercial build-out leads (every Monday).** Private commercial projects a general contractor can win
   (restaurants, medical, daycare, fitness, retail and industrial build-outs), ranked:
   - **A, act this week**: approved, or a new liquor license or new owner, in an existing building
     or suite. These are interior build-outs, usually under $2M, often for owner-operators who hire
@@ -35,15 +39,18 @@ deliberately plain and readable: see `civic/commercial.py` and `civic/report.py`
 
 ## How it works
 
-1. **Discover** each town's website and agenda platform (CivicPlus, Revize, WordPress, Legistar,
+1. **Discover** each town's agenda pages and platform (CivicPlus, Revize, WordPress, Legistar,
    CivicClerk, Granicus…).
-2. **Collect** agenda, minutes and packet links; **extract** text from the PDFs and pages.
-3. **Classify** agenda items (rezoning, special use, variance, planned development, liquor
-   license, car wash…) and read the decision and vote from minutes.
-4. **Rank** commercial leads A/B/C and write the reports as Markdown, HTML and TSV.
+2. **Collect** new agendas, minutes and packets.
+3. **Extract** the text from PDFs and pages.
+4. **Classify**: split documents into items, tag them (rezoning, special use, variance, planned
+   development, liquor license, car wash…) and record decisions and votes from minutes.
+5. **Digest**: write town digests and the weekly lead reports (Markdown, HTML, and a TSV that
+   drops straight into a lead spreadsheet), with commercial leads ranked A/B/C.
 
-It runs on a nightly GitHub Actions schedule with no servers. Tests run before every collection,
-and a failed test marks the run red.
+It runs nightly on GitHub Actions' free scheduler with no servers. Tests run before every
+collection, and a failed test marks the run red. Some village sites block automated requests,
+which is why fewer towns are collected than tracked.
 
 ## Privacy
 
