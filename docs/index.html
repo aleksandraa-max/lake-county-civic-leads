@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lake County Civic Archive</title>
+<meta name="description" content="A nightly AI-assisted pipeline that turns Lake County, IL village agendas and minutes into searchable decisions and weekly project leads.">
+<style>
+  :root {
+    --ink: #1b2330; --muted: #5d6778; --line: #e4e8ef; --bg: #fbfcfd; --card: #ffffff;
+    --accent: #2f5fd0; --accent-soft: #e9effc; --green: #2f8a57; --green-soft: #e5f4ea;
+    --amber: #a86a00; --amber-soft: #fdf3dd;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink);
+         font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; }
+  main { max-width: 880px; margin: 0 auto; padding: 56px 24px 72px; }
+  h1 { font-size: 34px; line-height: 1.2; margin: 0 0 12px; letter-spacing: -0.01em; }
+  h2 { font-size: 21px; margin: 56px 0 14px; }
+  p { margin: 0 0 14px; }
+  .lede { font-size: 19px; color: var(--muted); max-width: 720px; }
+  .eyebrow { font-size: 13px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
+             color: var(--accent); margin-bottom: 10px; }
+  .problem { border-left: 3px solid var(--accent); padding: 4px 0 4px 16px; margin: 28px 0 0;
+             font-size: 17px; }
+
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 8px; }
+  .stat { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 16px; }
+  .stat b { display: block; font-size: 26px; line-height: 1.1; }
+  .stat span { font-size: 13px; color: var(--muted); }
+  .note { font-size: 13px; color: var(--muted); margin-top: 10px; }
+
+  ul.plain { padding-left: 20px; margin: 0; }
+  ul.plain li { margin-bottom: 8px; }
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0 4px; }
+  .tags span { font-size: 13px; background: var(--accent-soft); color: var(--accent); border-radius: 999px;
+               padding: 2px 10px; }
+
+  .flow { width: 100%; height: auto; margin: 6px 0 0; }
+  .flow text { font-family: inherit; }
+
+  .digest { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 4px 20px;
+            margin-bottom: 16px; }
+  .digest h3 { font-size: 17px; margin: 16px 0 6px; }
+  .item { display: grid; grid-template-columns: 112px 1fr; gap: 14px; padding: 12px 0;
+          border-top: 1px solid var(--line); }
+  .item:first-of-type { border-top: 0; }
+  .when { font-size: 13px; color: var(--muted); }
+  .badge { display: inline-block; font-size: 12px; font-weight: 600; border-radius: 6px; padding: 1px 8px;
+           margin-top: 4px; }
+  .badge.hearing { background: var(--amber-soft); color: var(--amber); }
+  .badge.board { background: var(--green-soft); color: var(--green); }
+  .item b { display: block; }
+  .item a { font-size: 13px; color: var(--accent); text-decoration: none; }
+  .item a:hover { text-decoration: underline; }
+
+  .who { display: grid; grid-template-columns: 1.4fr 1fr; gap: 16px; }
+  .who .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; }
+  .who h3 { font-size: 16px; margin: 0 0 8px; }
+  .hero-sub { font-size: 15px; color: var(--muted); margin-top: 6px; }
+  .before-after { display: grid; grid-template-columns: 1fr 40px 1fr; align-items: stretch; gap: 0; margin-top: 8px; }
+  .ba-card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; }
+  .ba-card .label { font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
+                    color: var(--muted); margin-bottom: 8px; }
+  .ba-card.raw { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13.5px; line-height: 1.55;
+                 background: #f6f7f9; }
+  .ba-arrow { display: flex; align-items: center; justify-content: center; color: #9aa6b8; font-size: 22px; }
+  .lead dl { display: grid; grid-template-columns: 96px 1fr; gap: 6px 10px; margin: 8px 0 0; font-size: 14.5px; }
+  .lead dt { color: var(--muted); }
+  .lead dd { margin: 0; }
+  .prio { display: inline-block; font-weight: 700; font-size: 12px; border-radius: 6px; padding: 1px 8px; }
+  .prio.A { background: var(--green-soft); color: var(--green); }
+  .prio.B { background: var(--accent-soft); color: var(--accent); }
+  .prio.C { background: #eef0f3; color: var(--muted); }
+  table.report { width: 100%; border-collapse: collapse; font-size: 14px; background: var(--card);
+                 border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+  table.report th { text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: .05em;
+                    color: var(--muted); background: #f6f7f9; padding: 10px 12px; }
+  table.report td { padding: 10px 12px; border-top: 1px solid var(--line); vertical-align: top; }
+  .steps { counter-reset: s; list-style: none; padding: 0; margin: 0; }
+  .steps li { position: relative; padding-left: 40px; margin-bottom: 14px; }
+  .steps li::before { counter-increment: s; content: counter(s); position: absolute; left: 0; top: 1px;
+                      width: 26px; height: 26px; border-radius: 50%; background: var(--accent-soft);
+                      color: var(--accent); font-weight: 700; font-size: 13px; display: flex;
+                      align-items: center; justify-content: center; }
+  .split { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .split .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; }
+  .split h3 { font-size: 15px; margin: 0 0 6px; }
+  .split p { font-size: 14.5px; margin: 0; }
+  .todo { background: #fff4c2; border: 1px dashed #d9b400; border-radius: 4px; padding: 0 4px; }
+  @media (max-width: 680px) {
+    .before-after, .split { grid-template-columns: 1fr; }
+    .ba-arrow { transform: rotate(90deg); height: 32px; }
+    table.report th:nth-child(4), table.report td:nth-child(4) { display: none; }
+  }
+
+  .codelink { margin-top: 4px; font-size: 15px; }
+  .codelink a, footer a { color: var(--accent); }
+  footer { margin-top: 56px; padding-top: 20px; border-top: 1px solid var(--line); font-size: 14px;
+           color: var(--muted); }
+  @media (max-width: 680px) {
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    .who { grid-template-columns: 1fr; }
+    .item { grid-template-columns: 1fr; gap: 4px; }
+    h1 { font-size: 28px; }
+  }
+</style>
+</head>
+<body>
+<main>
+
+  <div class="eyebrow">Project · AI for a small business</div>
+  <h1>A weekly lead list for local contractors, built from public records with AI</h1>
+  <p class="lede">Every night it reads the agendas of 36 village boards and zoning commissions in
+    Lake County, Illinois, and every Monday it hands a contractor a short, ranked list of businesses that
+    are about to need a build-out, months before a permit is pulled.</p>
+  <p class="codelink"><a href="https://github.com/aleksandraa-max/lake-county-civic-leads">See the code, the ranking rules and a sample report on GitHub →</a></p>
+  <p class="problem">I wanted to keep up with development and land-use decisions in the towns around me,
+    but it meant digging through dozens of village websites and PDFs. Small contractors have the same
+    problem and no time to solve it.</p>
+
+  <h2>One lead, start to finish</h2>
+  <p>This is what the village posts, and what the contractor gets.</p>
+  <div class="before-after">
+    <div class="ba-card raw">
+      <div class="label">On page 1 of a Deerfield agenda</div>
+      Public hearing on a request for a special use to allow a "self-improvement facility" (Back Nine
+      Golf) in an existing unit at 710 Robert York Avenue, Deerfield Square…
+    </div>
+    <div class="ba-arrow">→</div>
+    <div class="ba-card lead">
+      <div class="label">In Monday's lead report</div>
+      <b>Back Nine Golf: new tenant in Deerfield Square</b> <span class="prio B">B</span>
+      <dl>
+        <dt>Scope</dt><dd>Interior build-out in an existing unit</dd>
+        <dt>Size fit</dt><dd>Yes: a typical local-GC job, under $2M</dd>
+        <dt>Next step</dt><dd>Watch the hearing; contact the applicant once it's approved</dd>
+        <dt>Source</dt><dd><a href="https://www.deerfield.il.us/AgendaCenter/ViewFile/Agenda/_11122026-1398">Village agenda, Nov 12, 2026</a></dd>
+      </dl>
+    </div>
+  </div>
+
+  <h2>What the contractor gets every Monday</h2>
+  <table class="report">
+    <thead><tr><th>Priority</th><th>Project</th><th>Town</th><th>Likely scope</th></tr></thead>
+    <tbody>
+      <tr><td><span class="prio B">B</span></td><td>Back Nine Golf, 710 Robert York Ave.</td><td>Deerfield</td><td>Interior build-out</td></tr>
+      <tr><td><span class="prio B">B</span></td><td>Deerfield Commons façade revision</td><td>Deerfield</td><td>Façade work; a center leasing up</td></tr>
+      <tr><td><span class="prio C">C</span></td><td>Hawthorn Mall: new drive-through restaurant</td><td>Vernon Hills</td><td>New building; watch for tenants</td></tr>
+      <tr><td><span class="prio C">C</span></td><td>El Car Wash, 1750 N. Milwaukee Ave.</td><td>Vernon Hills</td><td>Ground-up; chain brings its own GC</td></tr>
+    </tbody>
+  </table>
+  <p class="note"><span class="prio A">A</span> act this week: approved, or a new owner or liquor license in an
+    existing space. <span class="prio B">B</span> build the relationship: pending, or a center leasing up.
+    <span class="prio C">C</span> watch: big or chain projects; the tenants inside are the opportunity.
+    Every row links to the village's own document, and the list also exports straight into the
+    contractor's lead spreadsheet.</p>
+
+  <h2>What it replaces</h2>
+  <div class="stats">
+    <div class="stat"><b>36</b><span>village websites checked every night, 53 tracked in all</span></div>
+    <div class="stat"><b>13,458</b><span>agendas, minutes and packets read so far</span></div>
+    <div class="stat"><b>~18</b><span>ranked commercial leads in the first weekly report</span></div>
+    <div class="stat"><b>$0</b><span>servers or software to pay for; runs on GitHub's free scheduler</span></div>
+  </div>
+  <p class="note">Figures as of November 25, 2026. From 159,159 agenda items, it finds the few dozen a
+    contractor should care about this week.</p>
+
+  <h2>How I built it with AI</h2>
+  <ol class="steps">
+    <li><b>Started from the customer's question, not the data.</b> I researched what general
+      contractors actually look for in leads (project size, owner-operators, timing) and turned that into
+      the A/B/C rules.</li>
+    <li><b>Described the job in plain English; Claude Code wrote the pipeline.</b> It found each village's
+      agenda system, wrote the collectors and the PDF extraction, and wrote tests for each piece.</li>
+    <li><b>Made the judgment calls myself.</b> Which towns matter, what counts as a lead, what to leave out
+      (houses, renewals, public works), and how the report should read for a busy contractor.</li>
+    <li><b>Iterated on real output.</b> The first report flagged 159 items, most of them noise. Reading it
+      line by line with Claude and tightening the rules got it down to about 15 that a contractor
+      would act on.</li>
+    <li><b>Built in privacy from the start.</b> Agendas name homeowners who apply for a variance, so the
+      reports withhold private people's names and home addresses. Company names and official decisions stay.</li>
+    <li><b>Made it run without me.</b> It runs nightly with no servers, checks itself with tests before every
+      run, and flags itself red when something breaks.</li>
+  </ol>
+
+  <h2>How it works</h2>
+  <svg class="flow" viewBox="0 0 840 150" role="img" aria-label="Discover, collect, extract, classify, digest">
+    <defs>
+      <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#9aa6b8"/>
+      </marker>
+    </defs>
+    <g font-size="15" text-anchor="middle">
+      <g>
+        <rect x="4" y="20" width="140" height="58" rx="10" fill="#e9effc" stroke="#c9d6f4"/>
+        <text x="74" y="55" font-weight="600" fill="#1b2330">Discover</text>
+        <text x="74" y="104" font-size="12.5" fill="#5d6778">find each town's</text>
+        <text x="74" y="121" font-size="12.5" fill="#5d6778">agenda pages</text>
+      </g>
+      <g>
+        <rect x="178" y="20" width="140" height="58" rx="10" fill="#e9effc" stroke="#c9d6f4"/>
+        <text x="248" y="55" font-weight="600" fill="#1b2330">Collect</text>
+        <text x="248" y="104" font-size="12.5" fill="#5d6778">download new</text>
+        <text x="248" y="121" font-size="12.5" fill="#5d6778">agendas and minutes</text>
+      </g>
+      <g>
+        <rect x="352" y="20" width="140" height="58" rx="10" fill="#e9effc" stroke="#c9d6f4"/>
+        <text x="422" y="55" font-weight="600" fill="#1b2330">Extract</text>
+        <text x="422" y="104" font-size="12.5" fill="#5d6778">pull the text</text>
+        <text x="422" y="121" font-size="12.5" fill="#5d6778">out of PDFs</text>
+      </g>
+      <g>
+        <rect x="526" y="20" width="140" height="58" rx="10" fill="#e9effc" stroke="#c9d6f4"/>
+        <text x="596" y="55" font-weight="600" fill="#1b2330">Classify</text>
+        <text x="596" y="104" font-size="12.5" fill="#5d6778">split items, tag them,</text>
+        <text x="596" y="121" font-size="12.5" fill="#5d6778">record decisions</text>
+      </g>
+      <g>
+        <rect x="700" y="20" width="136" height="58" rx="10" fill="#e5f4ea" stroke="#bfe3cb"/>
+        <text x="768" y="55" font-weight="600" fill="#1b2330">Digest</text>
+        <text x="768" y="104" font-size="12.5" fill="#5d6778">town digests and</text>
+        <text x="768" y="121" font-size="12.5" fill="#5d6778">weekly lead reports</text>
+      </g>
+      <g stroke="#9aa6b8" stroke-width="2" marker-end="url(#arrow)">
+        <line x1="146" y1="49" x2="174" y2="49"/>
+        <line x1="320" y1="49" x2="348" y2="49"/>
+        <line x1="494" y1="49" x2="522" y2="49"/>
+        <line x1="668" y1="49" x2="696" y2="49"/>
+      </g>
+    </g>
+  </svg>
+  <p class="note">Runs on a schedule with no servers to maintain. It is polite to village websites
+    (one request per second, robots.txt honored) and checks itself with automated tests before each run.</p>
+
+  <h2>The same pattern works for other small businesses</h2>
+  <p>Public records already announce who is opening, expanding or moving. Any small business that sells to
+    those people can get the same kind of weekly list:</p>
+  <div class="split">
+    <div class="card"><h3>Sign and awning shops</h3><p>Sign variances and new tenants in shopping centers.</p></div>
+    <div class="card"><h3>Commercial cleaners and caterers</h3><p>New restaurants, gyms and offices before they open.</p></div>
+    <div class="card"><h3>Real estate agents</h3><p>What has been proposed or approved near a listing.</p></div>
+    <div class="card"><h3>Landscapers and paving contractors</h3><p>New site plans and parking lot approvals.</p></div>
+  </div>
+
+  <h2>About me</h2>
+  <p>I've spent the last 15 years building a corporate career, and I'm seeing first-hand the impact AI
+    is having inside a large company. Outside work, I build things with AI for myself and my family all the
+    time. Seeing both sides is what makes me so excited about small businesses and the opportunities ahead.</p>
+  <p>I want to be part of this transformation: to see the spark when a small business owner realizes what
+    this technology can do for them, and to help them feel as excited about the future as I am.</p>
+
+  <footer>
+    Built with Claude Code. Sources are public meeting records from Lake County, Illinois
+    municipalities. Residents' names and raw minutes text are not published.
+    <a href="https://github.com/aleksandraa-max/lake-county-civic-leads">Code on GitHub</a>.
+  </footer>
+
+</main>
+</body>
+</html>
