@@ -12,7 +12,7 @@ build-out.
 **Sample report:** [`sample/commercial-sample.md`](sample/commercial-sample.md)
 
 This repository holds the code, configuration and tests only. The collected archive and the
-weekly reports are kept private (see [Privacy](#privacy)).
+weekly reports are kept private (see [What's public and what's private](#whats-public-and-whats-private)).
 
 Built with Claude Code. The project page explains how it was built with AI and how the same
 pattern works for other small businesses.
@@ -52,15 +52,27 @@ It runs nightly on GitHub Actions' free scheduler with no servers. Tests run bef
 collection, and a failed test marks the run red. Some village sites block automated requests,
 which is why fewer towns are collected than tracked.
 
-## Privacy
+## What's public and what's private
 
-Agendas name homeowners who apply for a variance. The reports withhold names that look like
-private people ("Petitioner …", "Appellant …", "filed by …, owners", including middle initials,
-couples and "as Trustee") and the appellant's home address, and the commercial report drops cases
-about private homes. Company names and official decisions stay.
+| Public (this repo) | Private |
+| --- | --- |
+| The code, the ranking rules, the tests, a sample report and the project page | The collected archive (the text of every agenda, minutes and packet, and the database built from them) and the full weekly reports |
 
-The raw documents are not redacted, so the collected archive is not published here. Names and
-addresses in the tests are made up.
+**Why the code is public.** It is the part worth showing, and it contains nothing sensitive.
+Anyone can read exactly how a lead is picked and ranked.
+
+**Why the archive stays private.** Every document comes from a public village website, but
+agendas, packets and minutes also name residents: homeowners who apply for a variance, people
+who speak at meetings, and sometimes their home addresses, phone numbers and emails. Each one is
+public on its own, buried in a PDF on one village's site. Gathered into one searchable
+collection, they would make it easy to look people up, which the original postings don't.
+
+**What the reports show.** The leads are about businesses, so business names, business
+addresses and official decisions stay. Names that look like private people ("Petitioner …",
+"Appellant …", "filed by …, owners", including middle initials, couples and "as Trustee") and
+the appellant's home address are withheld, and cases about private homes are dropped from the
+commercial report. That filtering is rule-based and good but not perfect, which is one more
+reason the raw text is not published. Names and addresses in the tests are made up.
 
 ## Run it yourself
 
