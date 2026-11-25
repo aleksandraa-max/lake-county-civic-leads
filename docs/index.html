@@ -117,7 +117,7 @@
   <p class="codelink"><a href="https://github.com/aleksandraa-max/lake-county-civic-leads">See the code, the ranking rules and a sample report on GitHub →</a></p>
   <p class="problem">I wanted to keep up with development and land-use decisions in the towns around me,
     but it meant digging through dozens of village websites and PDFs. Small contractors have the same
-    problem and no time to solve it.</p>
+    problem and no time to solve it, including my family's contracting business, which this is built for.</p>
 
   <h2>One lead, start to finish</h2>
   <p>This is what the village posts, and what the contractor gets.</p>
@@ -160,10 +160,10 @@
   <div class="stats">
     <div class="stat"><b>36</b><span>village websites checked every night, 53 tracked in all</span></div>
     <div class="stat"><b>13,458</b><span>agendas, minutes and packets read so far</span></div>
-    <div class="stat"><b>~18</b><span>ranked commercial leads in the first weekly report</span></div>
+    <div class="stat"><b>18</b><span>ranked commercial leads in the first weekly report</span></div>
     <div class="stat"><b>$0</b><span>servers or software to pay for; runs on GitHub's free scheduler</span></div>
   </div>
-  <p class="note">Figures as of November 25, 2026. From 159,159 agenda items, it finds the few dozen a
+  <p class="note">Figures as of November 25, 2026. From more than 159,000 agenda items collected so far, it finds the few dozen a
     contractor should care about this week.</p>
 
   <h2>How I built it with AI</h2>
@@ -175,9 +175,9 @@
       agenda system, wrote the collectors and the PDF extraction, and wrote tests for each piece.</li>
     <li><b>Made the judgment calls myself.</b> Which towns matter, what counts as a lead, what to leave out
       (houses, renewals, public works), and how the report should read for a busy contractor.</li>
-    <li><b>Iterated on real output.</b> The first report flagged 159 items, most of them noise. Reading it
-      line by line with Claude and tightening the rules got it down to about 15 that a contractor
-      would act on.</li>
+    <li><b>Iterated on real output.</b> The first draft report flagged about 160 items, most of them noise. Reading it
+      line by line with Claude and tightening the rules cut it to a short list: 18 leads a contractor
+      would act on in the first weekly report.</li>
     <li><b>Built in privacy from the start.</b> Agendas name homeowners who apply for a variance, so the
       reports withhold private people's names and home addresses. Company names and official decisions stay.</li>
     <li><b>Made it run without me.</b> It runs nightly with no servers, checks itself with tests before every
@@ -254,8 +254,9 @@
   </div>
 
   <h2>About me</h2>
-  <p>I've spent the last 15 years building a corporate career, and I'm seeing first-hand the impact AI
-    is having inside a large company. Outside work, I build things with AI for myself and my family all the
+  <p>I've spent the last 15 years building a corporate career. Today I'm a product manager for two data
+    engineering teams, and I run most of my work through Claude Code; one recurring process went from a
+    week and a half to about a day. I'm seeing first-hand the impact AI is having inside a large company. Outside work, I build things with AI for myself and my family all the
     time. Seeing both sides is what makes me so excited about small businesses and the opportunities ahead.</p>
   <p>I want to be part of this transformation: to see the spark when a small business owner realizes what
     this technology can do for them, and to help them feel as excited about the future as I am.</p>
