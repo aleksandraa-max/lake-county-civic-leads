@@ -1,0 +1,104 @@
+# Lake County, IL — every municipality plus the county itself.
+#
+# Fields
+#   slug       short id used in file paths and the database
+#   name       display name
+#   kind       village | city | county
+#   url        homepage (the collector discovers agenda pages from here)
+#   verified   true = URL confirmed during research; false = best guess, check the discovery report
+#   platform   optional hint: civicplus | granicus | civicclerk | legistar | generic
+#              leave blank and `python -m civic discover` fingerprints the site
+#   seeds      optional extra start pages (agenda/minutes pages) for the crawler
+#   legistar   Legistar client name, if the body publishes through Legistar
+#   civicclerk CivicClerk tenant name (from <tenant>.portal.civicclerk.com)
+#   note       anything a human should know
+#
+# Partial towns (most of the town sits in another county) are included but marked.
+
+towns:
+  - {slug: lake-county, name: Lake County, kind: county, url: https://www.lakecountyil.gov, verified: true, platform: civicplus, legistar: lakecounty,
+     seeds: [https://lakecounty.legistar.com/Calendar.aspx],
+     note: "County Board, PBZ&E Committee, Zoning Board of Appeals. Legistar client 'lakecounty' is correct, but its events API returns 500 (Nov 2026); the Calendar.aspx seed picks up agenda PDFs instead."}
+
+  - {slug: antioch, name: Antioch, kind: village, url: https://www.antioch.il.gov, verified: true,
+     seeds: [https://www.antioch.il.gov/agenda-center, https://www.antioch.il.gov/documents/village_board/Agendas, https://www.antioch.il.gov/documents/Commissions/Planning%20and%20Zoning%20Board/Agendas],
+     note: "Bare antioch.il.gov returns 404; www works"}
+  - {slug: bannockburn, name: Bannockburn, kind: village, url: https://www.bannockburn.org, verified: false}
+  - {slug: barrington, name: Barrington, kind: village, url: https://www.barrington-il.gov, verified: true,
+     seeds: [https://www.barrington-il.gov/board-meetings-agendas/],
+     note: "Mostly in Cook County. Site works from a normal browser; unreachable from GitHub runners, likely blocks datacenter IPs"}
+  - {slug: barrington-hills, name: Barrington Hills, kind: village, url: https://www.barringtonhills-il.gov, verified: true, note: "Partly in Lake County"}
+  - {slug: beach-park, name: Beach Park, kind: village, url: https://villageofbeachpark.com, verified: true,
+     seeds: [https://villageofbeachpark.com/government/agendas-and-minutes],
+     note: "www redirects to plain http; use the bare https domain. Joomla DJ-Catalog2 download links"}
+  - {slug: buffalo-grove, name: Buffalo Grove, kind: village, url: https://www.vbg.org, verified: false, note: "Partly in Cook County"}
+  - {slug: deer-park, name: Deer Park, kind: village, url: https://www.villageofdeerpark.com, verified: false, note: "Partly in Cook County"}
+  - {slug: deerfield, name: Deerfield, kind: village, url: https://www.deerfield.il.us, verified: false, note: "Partly in Cook County"}
+  - {slug: fox-lake, name: Fox Lake, kind: village, url: https://www.foxlake.org, verified: false, note: "Partly in McHenry County"}
+  - {slug: fox-river-grove, name: Fox River Grove, kind: village, url: https://www.foxrivergrove.org, verified: false, note: "Mostly in McHenry County"}
+  - {slug: grayslake, name: Grayslake, kind: village, url: https://www.villageofgrayslake.com, verified: false, note: "T5 data center campus"}
+  - {slug: green-oaks, name: Green Oaks, kind: village, url: https://www.greenoaks.org, verified: false}
+  - {slug: gurnee, name: Gurnee, kind: village, url: https://www.gurnee.il.us, verified: true}
+  - {slug: hainesville, name: Hainesville, kind: village, url: https://www.hainesville.org, verified: true,
+     seeds: [https://www.hainesville.org/board-meetings]}
+  - {slug: hawthorn-woods, name: Hawthorn Woods, kind: village, url: https://www.vhw.org, verified: false}
+  - {slug: highland-park, name: Highland Park, kind: city, url: https://www.cityhpil.com, verified: false}
+  - {slug: highwood, name: Highwood, kind: city, url: https://www.cityofhighwood.com, verified: true, platform: civicplus,
+     note: "Official site is .com; the .org domain does not respond"}
+  - {slug: indian-creek, name: Indian Creek, kind: village, url: https://www.villageofindiancreek.org, verified: false,
+     note: "Domain does not resolve (Nov 2026); no official website found"}
+  - {slug: island-lake, name: Island Lake, kind: village, url: https://www.villageofislandlake.com, verified: false, note: "Partly in McHenry County"}
+  - {slug: kildeer, name: Kildeer, kind: village, url: https://villageofkildeer.com, verified: true,
+     seeds: [https://villageofkildeer.com/public-hearings/]}
+  - {slug: lake-barrington, name: Lake Barrington, kind: village, url: https://www.lakebarrington.org, verified: false}
+  - {slug: lake-bluff, name: Lake Bluff, kind: village, url: https://www.lakebluff.org, verified: true,
+     seeds: [https://www.lakebluff.org/government/agendas-and-minutes],
+     note: "Joomla DJ-Catalog2 download links. Works from a normal browser; was unreachable from GitHub runners"}
+  - {slug: lake-forest, name: Lake Forest, kind: city, url: https://www.cityoflakeforest.com, verified: false}
+  - {slug: lake-villa, name: Lake Villa, kind: village, url: https://www.lake-villa.org, verified: false}
+  - {slug: lake-zurich, name: Lake Zurich, kind: village, url: https://www.lakezurich.org, verified: true, platform: civicplus}
+  - {slug: lakemoor, name: Lakemoor, kind: village, url: https://www.lakemoor.net, verified: false, note: "Partly in McHenry County"}
+  - {slug: libertyville, name: Libertyville, kind: village, url: https://www.libertyville.com, verified: false}
+  - {slug: lincolnshire, name: Lincolnshire, kind: village, url: https://www.lincolnshireil.gov, verified: true,
+     seeds: [https://www.lincolnshireil.gov/government/about/agendas-minutes-packets-video],
+     note: "Joomla DJ-Catalog2 download links. Works from a normal browser; was unreachable from GitHub runners"}
+  - {slug: lindenhurst, name: Lindenhurst, kind: village, url: https://www.lindenhurstil.org, verified: false}
+  - {slug: long-grove, name: Long Grove, kind: village, url: https://www.longgroveil.gov, verified: true,
+     seeds: [https://longgroveil.gov/bc-pc]}
+  - {slug: mettawa, name: Mettawa, kind: village, url: https://www.mettawa.org, verified: false}
+  - {slug: mundelein, name: Mundelein, kind: village, url: https://www.mundelein.org, verified: true,
+     note: "Agendas page (/129/Agendas-Minutes) loads meetings by script, so few documents are found. Pre-March 2024 board materials: https://mundeleinvillageil.iqm2.com/citizens/default.aspx"}
+  - {slug: north-barrington, name: North Barrington, kind: village, url: https://www.northbarrington.org, verified: false}
+  - {slug: north-chicago, name: North Chicago, kind: city, url: https://www.northchicago.org, verified: false}
+  - {slug: old-mill-creek, name: Old Mill Creek, kind: village, url: https://www.oldmillcreekil.gov, verified: false,
+     note: "Very small village; domain does not resolve (Nov 2026); no official website found"}
+  - {slug: park-city, name: Park City, kind: city, url: https://parkcityil.com, verified: true,
+     seeds: [https://sites.google.com/parkcityil.com/agenda-minutes/home],
+     note: "parkcityil.org redirects to parkcityil.com; agendas are on a Google Sites page"}
+  - {slug: port-barrington, name: Port Barrington, kind: village, url: https://www.portbarrington.net, verified: false, note: "Partly in McHenry County"}
+  - {slug: riverwoods, name: Riverwoods, kind: village, url: https://www.riverwoods.gov, verified: false,
+     note: "villageofriverwoods.org redirects here; riverwoods.gov returns 403 to scripted clients"}
+  - {slug: round-lake, name: Round Lake, kind: village, url: https://www.eroundlake.com, verified: true,
+     note: "Returns 403 to scripted clients (Nov 2026)"}
+  - {slug: round-lake-beach, name: Round Lake Beach, kind: village, url: https://roundlakebeachil.gov, verified: true,
+     seeds: [https://roundlakebeachil.gov/government/village_board_agendas_and_minutes/index.php]}
+  - {slug: round-lake-heights, name: Round Lake Heights, kind: village, url: https://www.villageofroundlakeheights.org, verified: false,
+     note: "Returns 403 to scripted clients (Nov 2026)"}
+  - {slug: round-lake-park, name: Round Lake Park, kind: village, url: https://www.villageofroundlakepark.com, verified: false,
+     note: "TLS handshake fails (Nov 2026); site may be down or moved"}
+  - {slug: third-lake, name: Third Lake, kind: village, url: https://www.thirdlakevillage.com, verified: true,
+     seeds: [https://www.thirdlakevillage.com/agendasandminutes],
+     note: "Munibit site; the document list loads by script, so the crawler may still find nothing"}
+  - {slug: tower-lakes, name: Tower Lakes, kind: village, url: https://www.towerlakes-il.gov, verified: false, note: "URL unconfirmed"}
+  - {slug: vernon-hills, name: Vernon Hills, kind: village, url: https://www.vernonhills.org, verified: false}
+  - {slug: volo, name: Volo, kind: village, url: https://www.volo.org, verified: false,
+     note: "volo.org is a parked domain for sale (Nov 2026); real village site not found yet"}
+  - {slug: wadsworth, name: Wadsworth, kind: village, url: https://www.villageofwadsworth.org, verified: true}
+  - {slug: wauconda, name: Wauconda, kind: village, url: https://www.wauconda-il.gov, verified: false}
+  - {slug: waukegan, name: Waukegan, kind: city, url: https://www.waukeganil.gov, verified: true,
+     note: "Returns 403 to scripted clients (Nov 2026); needs allowlisting"}
+  - {slug: wheeling, name: Wheeling, kind: village, url: https://www.wheelingil.gov, verified: false, note: "Mostly in Cook County"}
+  - {slug: winthrop-harbor, name: Winthrop Harbor, kind: village, url: https://www.winthropharbor.org, verified: true,
+     seeds: [https://www.winthropharbor.org/Government/Village-Clerk/Agendas-Minutes],
+     note: ".com redirects to .org; the document list may load by script"}
+  - {slug: zion, name: Zion, kind: city, url: https://www.cityofzion.com, verified: false}
